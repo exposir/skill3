@@ -1,0 +1,1 @@
+../../../_meta/frontend/module-generator.md
