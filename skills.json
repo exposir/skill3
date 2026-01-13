@@ -1,0 +1,157 @@
+{
+  "version": "2.0.0",
+  "description": "Self-evolving skill registry with frontend development capabilities",
+  "updated_at": "2026-01-14",
+  "skills": {
+    "genesis": {
+      "id": "genesis",
+      "name": "Genesis",
+      "description": "Meta skill that generates new skills based on requirements",
+      "path": "_meta/genesis.md",
+      "type": "meta",
+      "upstream": [],
+      "downstream": ["*"],
+      "version": "1.0.0",
+      "status": "active"
+    },
+    "registry": {
+      "id": "registry",
+      "name": "Registry Manager",
+      "description": "Manages skill registration, updates, and dependency tracking",
+      "path": "_meta/registry.md",
+      "type": "meta",
+      "upstream": ["genesis"],
+      "downstream": ["*"],
+      "version": "1.0.0",
+      "status": "active"
+    },
+    "orchestrator": {
+      "id": "orchestrator",
+      "name": "Orchestrator",
+      "description": "Executes skills in DAG topological order with state management",
+      "path": "_meta/orchestrator.md",
+      "type": "meta",
+      "upstream": ["registry"],
+      "downstream": ["*"],
+      "version": "1.0.0",
+      "status": "active"
+    },
+    "project-init": {
+      "id": "project-init",
+      "name": "Project Initializer",
+      "description": "Initializes frontend project structure with configs and directories",
+      "path": "_meta/frontend/project-init.md",
+      "type": "meta-frontend",
+      "upstream": [],
+      "downstream": ["module-generator", "contracts"],
+      "version": "1.0.0",
+      "status": "active",
+      "tags": ["frontend", "init", "project"]
+    },
+    "module-generator": {
+      "id": "module-generator",
+      "name": "Module Generator",
+      "description": "Generates frontend modules with code structure, contracts, and skills",
+      "path": "_meta/frontend/module-generator.md",
+      "type": "meta-frontend",
+      "upstream": ["project-init"],
+      "downstream": ["contracts", "build"],
+      "version": "1.0.0",
+      "status": "active",
+      "tags": ["frontend", "module", "generator"]
+    },
+    "contracts": {
+      "id": "contracts",
+      "name": "Contract Manager",
+      "description": "Manages module interface contracts for type safety",
+      "path": "_meta/frontend/contracts.md",
+      "type": "meta-frontend",
+      "upstream": ["module-generator"],
+      "downstream": ["build", "coordinator"],
+      "version": "1.0.0",
+      "status": "active",
+      "tags": ["frontend", "contracts", "types"]
+    },
+    "build": {
+      "id": "build",
+      "name": "Build Validator",
+      "description": "Validates build, type checking, linting, and tests",
+      "path": "_meta/frontend/build.md",
+      "type": "meta-frontend",
+      "upstream": ["contracts", "module-generator"],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "tags": ["frontend", "build", "quality"]
+    },
+    "coordinator": {
+      "id": "coordinator",
+      "name": "Module Coordinator",
+      "description": "Coordinates multi-module development with dependency management",
+      "path": "_meta/frontend/coordinator.md",
+      "type": "meta-frontend",
+      "upstream": ["module-generator", "contracts"],
+      "downstream": ["build"],
+      "version": "1.0.0",
+      "status": "active",
+      "tags": ["frontend", "coordinator", "orchestration"]
+    },
+    "skill-001-hello-world": {
+      "id": "skill-001-hello-world",
+      "name": "Hello World",
+      "description": "Demo skill - demonstrates basic skill structure and communication",
+      "path": "_generated/skill-001-hello-world.md",
+      "type": "generated",
+      "upstream": [],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["example", "demo"]
+    }
+  },
+  "graph": {
+    "nodes": [
+      "genesis",
+      "registry",
+      "orchestrator",
+      "project-init",
+      "module-generator",
+      "contracts",
+      "build",
+      "coordinator",
+      "skill-001-hello-world"
+    ],
+    "edges": [
+      { "from": "genesis", "to": "registry" },
+      { "from": "registry", "to": "orchestrator" },
+      { "from": "project-init", "to": "module-generator" },
+      { "from": "project-init", "to": "contracts" },
+      { "from": "module-generator", "to": "contracts" },
+      { "from": "module-generator", "to": "build" },
+      { "from": "contracts", "to": "build" },
+      { "from": "contracts", "to": "coordinator" },
+      { "from": "module-generator", "to": "coordinator" },
+      { "from": "coordinator", "to": "build" }
+    ]
+  },
+  "execution_order": [
+    "genesis",
+    "registry",
+    "orchestrator",
+    "project-init",
+    "module-generator",
+    "contracts",
+    "coordinator",
+    "build",
+    "skill-001-hello-world"
+  ],
+  "frontend": {
+    "version": "1.0.0",
+    "modules_registry": "src/modules/registry.json",
+    "contracts_dir": "src/contracts/",
+    "templates_dir": "templates/",
+    "supported_frameworks": ["react", "vue", "svelte"],
+    "default_framework": "react"
+  }
+}

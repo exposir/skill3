@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "current_execution": null,
+  "executions": {},
+  "template": {
+    "execution_id": "<uuid>",
+    "started_at": "<ISO-date>",
+    "status": "pending|running|completed|failed",
+    "pipeline": ["<skill-id>", "<skill-id>"],
+    "current_skill": "<skill-id>",
+    "data": {
+      "<skill-id>": {
+        "status": "pending|running|completed|failed",
+        "started_at": "<ISO-date>",
+        "completed_at": "<ISO-date>",
+        "input": {},
+        "output": {},
+        "error": null
+      }
+    },
+    "metadata": {
+      "triggered_by": "<user|skill>",
+      "context": {}
+    }
+  }
+}
