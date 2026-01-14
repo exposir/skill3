@@ -2,6 +2,8 @@
 
 本文档包含从简单到复杂的多个示例，帮助你快速上手自进化 Skill 编排系统。
 
+> **重要说明**: Claude Code 的 Skill 是通过**自然语言描述自动触发**的，而不是通过 `/command` 斜杠命令调用。当你的请求匹配某个 Skill 的描述时，Claude 会自动加载并使用该 Skill。
+
 ---
 
 ## 目录
@@ -22,12 +24,13 @@
 
 **步骤**:
 
-```bash
-# 1. 使用 Genesis 创建 skill
-/genesis "创建一个 greeting skill，接收用户名参数，返回个性化问候语"
+```
+# 使用自然语言描述需求，Claude 会自动匹配 Genesis skill
+帮我创建一个 greeting skill，接收用户名参数，返回个性化问候语
 ```
 
-**预期输出**:
+**预期行为**:
+Claude 会识别这是一个生成新 skill 的需求，自动加载 Genesis skill，然后：
 ```
 ✓ 已创建 skill: skill-002-greeting
 ✓ 路径: ./_generated/skill-002-greeting.md
@@ -35,8 +38,9 @@
 ```
 
 **使用新 skill**:
-```bash
-/greeting name="张三"
+```
+# 用自然语言描述需求，Claude 会匹配 greeting skill
+用张三这个名字生成一个问候语
 ```
 
 **预期结果**:
@@ -49,11 +53,11 @@
 
 ## Demo 1.2: 查看系统状态
 
-**目标**: 熟悉系统管理命令
+**目标**: 熟悉系统管理功能
 
-```bash
-# 查看所有已注册的 skills
-/registry action=list
+```
+# 用自然语言请求，Claude 会自动匹配 Registry skill
+列出所有已注册的 skills
 ```
 
 **预期输出**:
@@ -72,9 +76,9 @@ Generated Skills (2):
 Total: 5 skills
 ```
 
-```bash
+```
 # 查看依赖关系图
-/registry action=graph
+显示 skill 的依赖关系图
 ```
 
 **预期输出**:
@@ -96,31 +100,12 @@ genesis
 
 **步骤**:
 
-1. 创建文件 `_generated/skill-003-calculator.md`:
+1. 创建 skill 目录和文件 `.claude/skills/calculator/SKILL.md`:
 
 ```markdown
 ---
-id: skill-003-calculator
-name: calculator
-version: 1.0.0
-description: 简单计算器，支持加减乘除
-directory: _generated/
-upstream: []
-downstream: []
-inputs:
-  - name: expression
-    type: string
-    required: true
-    description: 数学表达式，如 "1 + 2"
-outputs:
-  - name: result
-    type: number
-    description: 计算结果
-created_by: manual
-created_at: 2026-01-14
-tags:
-  - utility
-  - math
+name: Calculator
+description: 简单计算器，支持加减乘除运算
 ---
 
 # Calculator Skill
@@ -129,28 +114,25 @@ tags:
 
 ## Instructions
 
-当用户调用 `/calculator` 时：
+当用户需要进行数学计算时：
 
-1. 解析 expression 参数
+1. 解析用户提供的数学表达式
 2. 计算结果
 3. 返回结果给用户
 
 ## Examples
 
-输入: `/calculator expression="10 + 5 * 2"`
+输入: `计算 10 + 5 * 2`
 输出: `结果: 20`
 ```
 
-2. 注册到系统:
-
-```bash
-/registry action=add skill_id=skill-003-calculator
-```
+2. Skill 会自动被 Claude Code 加载（热重载）
 
 3. 使用:
 
-```bash
-/calculator expression="100 / 4 + 25"
+```
+# 用自然语言触发
+帮我计算 100 / 4 + 25
 ```
 
 ---
@@ -161,13 +143,15 @@ tags:
 
 **目标**: 创建一个处理 JSON 数据的 skill
 
-```bash
-/genesis "创建 json-formatter skill，接收 JSON 字符串，格式化输出并统计字段数量"
+```
+# 用自然语言描述需求
+创建一个 json-formatter skill，接收 JSON 字符串，格式化输出并统计字段数量
 ```
 
 **使用示例**:
-```bash
-/json-formatter data='{"name":"Alice","age":25,"city":"Beijing"}'
+```
+# 用自然语言触发
+格式化这个 JSON 数据：{"name":"Alice","age":25,"city":"Beijing"}
 ```
 
 **预期输出**:
@@ -192,13 +176,15 @@ tags:
 
 **目标**: 创建读取和分析文件的 skill
 
-```bash
-/genesis "创建 file-analyzer skill，接收文件路径，返回文件信息（大小、行数、类型）"
+```
+# 用自然语言描述需求
+创建一个 file-analyzer skill，接收文件路径，返回文件信息（大小、行数、类型）
 ```
 
 **使用示例**:
-```bash
-/file-analyzer path="./README.md"
+```
+# 用自然语言触发
+分析 README.md 文件的信息
 ```
 
 **预期输出**:
@@ -220,15 +206,16 @@ tags:
 
 **目标**: 创建包含输入验证的 skill
 
-```bash
-/genesis "创建 email-validator skill，验证邮箱格式是否正确，返回验证结果和域名信息"
+```
+# 用自然语言描述需求
+创建一个 email-validator skill，验证邮箱格式是否正确，返回验证结果和域名信息
 ```
 
 **使用示例**:
 
-```bash
-# 有效邮箱
-/email-validator email="user@example.com"
+```
+# 验证有效邮箱
+帮我验证这个邮箱格式是否正确：user@example.com
 ```
 
 **输出**:
@@ -241,9 +228,9 @@ tags:
 - 类型: 通用邮箱
 ```
 
-```bash
-# 无效邮箱
-/email-validator email="invalid-email"
+```
+# 验证无效邮箱
+验证邮箱：invalid-email
 ```
 
 **输出**:
@@ -264,26 +251,26 @@ tags:
 
 ### Step 1: 创建数据获取 Skill
 
-```bash
-/genesis "创建 data-fetcher skill，从指定 URL 获取 JSON 数据"
+```
+创建一个 data-fetcher skill，从指定 URL 获取 JSON 数据
 ```
 
 ### Step 2: 创建数据转换 Skill
 
-```bash
-/genesis "创建 data-transformer skill，将 JSON 数据转换为表格格式，上游是 data-fetcher"
+```
+创建一个 data-transformer skill，将 JSON 数据转换为表格格式，它依赖 data-fetcher 的输出
 ```
 
 ### Step 3: 创建数据输出 Skill
 
-```bash
-/genesis "创建 data-exporter skill，将表格数据导出为 CSV 文件，上游是 data-transformer"
+```
+创建一个 data-exporter skill，将表格数据导出为 CSV 文件，它依赖 data-transformer 的输出
 ```
 
 ### Step 4: 查看依赖图
 
-```bash
-/registry action=graph
+```
+显示所有 skill 的依赖关系图
 ```
 
 **输出**:
@@ -297,8 +284,8 @@ data-fetcher
 
 ### Step 5: 执行管道
 
-```bash
-/orchestrate task="从 GitHub API 获取用户信息并导出为 CSV" input={"url": "https://api.github.com/users"}
+```
+从 GitHub API 获取用户信息并导出为 CSV，URL 是 https://api.github.com/users
 ```
 
 **执行过程**:
@@ -331,22 +318,23 @@ Output: ./output/users.csv
 
 ### 创建三个独立的数据源 Skills
 
-```bash
-/genesis "创建 fetch-weather skill，获取天气数据"
-/genesis "创建 fetch-news skill，获取新闻数据"
-/genesis "创建 fetch-stocks skill，获取股票数据"
+```
+帮我创建三个独立的 skill：
+1. fetch-weather skill - 获取天气数据
+2. fetch-news skill - 获取新闻数据
+3. fetch-stocks skill - 获取股票数据
 ```
 
 ### 创建聚合 Skill
 
-```bash
-/genesis "创建 dashboard-aggregator skill，聚合天气、新闻、股票数据生成仪表板，上游是 fetch-weather, fetch-news, fetch-stocks"
+```
+创建一个 dashboard-aggregator skill，聚合天气、新闻、股票数据生成仪表板，它依赖上面三个 skill
 ```
 
 ### 查看并行组
 
-```bash
-/registry action=graph
+```
+显示 skill 依赖图和并行执行组
 ```
 
 **输出**:
@@ -364,8 +352,8 @@ Layer 1 (串行):
 
 ### 执行
 
-```bash
-/orchestrate task="生成今日仪表板"
+```
+生成今日仪表板
 ```
 
 **执行过程**:
@@ -396,27 +384,27 @@ Total: 1.7s (并行优化节省 1.3s)
 
 ### 创建验证 Skill
 
-```bash
-/genesis "创建 input-validator skill，验证输入数据格式，如果无效则标记错误"
+```
+创建一个 input-validator skill，验证输入数据格式，如果无效则标记错误
 ```
 
 ### 创建处理 Skill（依赖验证通过）
 
-```bash
-/genesis "创建 data-processor skill，处理验证通过的数据，上游是 input-validator，只在验证成功时执行"
+```
+创建一个 data-processor skill，处理验证通过的数据，它依赖 input-validator，只在验证成功时执行
 ```
 
 ### 创建错误处理 Skill
 
-```bash
-/genesis "创建 error-handler skill，处理验证失败的情况，上游是 input-validator，只在验证失败时执行"
+```
+创建一个 error-handler skill，处理验证失败的情况，它依赖 input-validator，只在验证失败时执行
 ```
 
 ### 执行示例
 
 **成功路径**:
-```bash
-/orchestrate task="处理数据" input={"data": {"name": "test", "value": 100}}
+```
+处理这个数据：{"name": "test", "value": 100}
 ```
 
 ```
@@ -426,8 +414,8 @@ Total: 1.7s (并行优化节省 1.3s)
 ```
 
 **失败路径**:
-```bash
-/orchestrate task="处理数据" input={"data": "invalid"}
+```
+处理这个数据："invalid"
 ```
 
 ```
@@ -446,8 +434,8 @@ Total: 1.7s (并行优化节省 1.3s)
 
 ### Step 1: 初始化项目
 
-```bash
-/project-init project_name="my-dashboard" framework="react" features=["typescript", "tailwind", "router", "store"]
+```
+初始化一个名为 my-dashboard 的 React 项目，使用 TypeScript、Tailwind、Router 和状态管理
 ```
 
 **输出**:
@@ -474,7 +462,7 @@ src/
 ├── vite.config.ts
 └── tailwind.config.js
 
-🚀 下一步: /module-gen name="auth"
+🚀 下一步: 创建 auth 模块
 ```
 
 ---
@@ -485,8 +473,8 @@ src/
 
 ### 创建认证模块
 
-```bash
-/module-gen name="auth" type="feature" exports=["useAuth", "AuthProvider", "AuthGuard"]
+```
+创建一个 auth 功能模块，导出 useAuth hook、AuthProvider 和 AuthGuard 组件
 ```
 
 **输出**:
@@ -525,8 +513,8 @@ _generated/skill-module-auth.md
 
 ### 创建用户模块（依赖认证模块）
 
-```bash
-/module-gen name="user" type="feature" dependencies=["auth"] exports=["useUser", "UserProfile", "UserSettings"]
+```
+创建一个 user 功能模块，依赖 auth 模块，导出 useUser hook、UserProfile 和 UserSettings 组件
 ```
 
 **输出**:
@@ -562,8 +550,8 @@ user → auth
 
 ### 规划任务
 
-```bash
-/coordinate action=plan task="实现用户登录和个人资料展示功能"
+```
+帮我规划实现用户登录和个人资料展示功能需要做什么
 ```
 
 **输出**:
@@ -597,15 +585,13 @@ user → auth
   Phase 3: [user] 实现个人资料
   Phase 4: 集成测试和构建验证
 
-预计: 4 个 skill 执行，约 2 分钟
-
 是否执行? [Y/n]
 ```
 
 ### 执行开发
 
-```bash
-/coordinate action=execute
+```
+开始执行上述开发计划
 ```
 
 **执行过程**:
@@ -651,8 +637,8 @@ user → auth
 
 **目标**: 运行完整的构建验证流水线
 
-```bash
-/build action=all
+```
+运行完整的构建验证，包括 lint、类型检查、测试和生产构建
 ```
 
 **输出**:
@@ -734,39 +720,39 @@ Bundle Size: 141.5 KB (gzip: 46.4 KB)
 
 ### Step 1: 初始化项目
 
-```bash
-/project-init project_name="ecommerce-admin" framework="react" features=["typescript", "tailwind", "router", "store", "api"]
+```
+初始化一个名为 ecommerce-admin 的 React 项目，使用 TypeScript、Tailwind、Router、状态管理和 API 客户端
 ```
 
 ### Step 2: 创建核心模块
 
-```bash
+```
 # 按顺序创建核心模块
-/module-gen name="api" type="core"
-/module-gen name="store" type="core" dependencies=["api"]
-/module-gen name="auth" type="core" dependencies=["api", "store"]
+创建 api 核心模块
+创建 store 核心模块，依赖 api
+创建 auth 核心模块，依赖 api 和 store
 ```
 
 ### Step 3: 创建共享模块
 
-```bash
-/module-gen name="ui" type="shared"
-/module-gen name="utils" type="shared"
+```
+创建 ui 共享模块
+创建 utils 共享模块
 ```
 
 ### Step 4: 创建业务模块
 
-```bash
-/module-gen name="product" type="feature" dependencies=["api", "store", "ui"]
-/module-gen name="order" type="feature" dependencies=["api", "store", "ui", "product"]
-/module-gen name="user" type="feature" dependencies=["api", "store", "ui", "auth"]
-/module-gen name="dashboard" type="feature" dependencies=["api", "store", "ui", "product", "order", "user"]
+```
+创建 product 功能模块，依赖 api、store、ui
+创建 order 功能模块，依赖 api、store、ui、product
+创建 user 功能模块，依赖 api、store、ui、auth
+创建 dashboard 功能模块，依赖 api、store、ui、product、order、user
 ```
 
 ### Step 5: 查看完整依赖图
 
-```bash
-/registry action=graph
+```
+显示完整的模块依赖关系图
 ```
 
 **输出**:
@@ -811,8 +797,8 @@ Max Depth: 5
 
 ### Step 6: 实现商品管理功能
 
-```bash
-/coordinate action=plan task="实现商品管理 CRUD 功能，包括列表、详情、创建、编辑、删除"
+```
+帮我规划实现商品管理 CRUD 功能，包括列表、详情、创建、编辑、删除
 ```
 
 **输出**:
@@ -837,14 +823,14 @@ Max Depth: 5
 开始执行? [Y/n]
 ```
 
-```bash
-/coordinate action=execute
+```
+开始执行商品管理功能开发
 ```
 
 ### Step 7: 最终构建验证
 
-```bash
-/build action=all
+```
+运行完整构建验证
 ```
 
 **最终输出**:
@@ -889,33 +875,33 @@ Performance:
 
 ### 创建代码审查 Skill
 
-```bash
-/genesis "创建 code-review skill，分析指定文件或目录的代码质量，检查命名规范、复杂度、潜在问题"
+```
+创建一个 code-review skill，分析指定文件或目录的代码质量，检查命名规范、复杂度、潜在问题
 ```
 
 ### 创建文档生成 Skill
 
-```bash
-/genesis "创建 doc-generator skill，为指定模块自动生成 API 文档，上游是任意 module skill"
+```
+创建一个 doc-generator skill，为指定模块自动生成 API 文档，它依赖模块 skill 的输出
 ```
 
 ### 创建部署 Skill
 
-```bash
-/genesis "创建 deploy skill，执行构建并部署到指定环境，上游是 build，支持 staging 和 production 环境"
+```
+创建一个 deploy skill，执行构建并部署到指定环境，它依赖 build skill，支持 staging 和 production 环境
 ```
 
 ### 使用自定义工作流
 
-```bash
+```
 # 代码审查
-/code-review path="src/modules/product"
+对 src/modules/product 目录进行代码审查
 
 # 生成文档
-/doc-generator module="product"
+为 product 模块生成 API 文档
 
 # 部署
-/deploy env="staging"
+部署到 staging 环境
 ```
 
 ---
@@ -926,8 +912,8 @@ Performance:
 
 ### 场景: Skill 执行失败
 
-```bash
-/orchestrate task="处理数据"
+```
+执行数据处理任务
 ```
 
 **错误输出**:
@@ -947,8 +933,9 @@ Error:
 ### 调试步骤
 
 **1. 查看执行状态**:
-```bash
+```
 # 读取 state.json 查看详细信息
+查看当前执行状态
 ```
 
 **state.json 内容**:
@@ -984,13 +971,13 @@ Error:
 - `data-transformer` 没有处理 null 的情况
 
 **3. 修复 Skill**:
-```bash
-/skill-module-data-transformer action=fix requirement="添加空数据检查，当上游返回 null 时返回空数组"
+```
+修复 data-transformer skill，添加空数据检查，当上游返回 null 时返回空数组
 ```
 
 **4. 重新执行**:
-```bash
-/orchestrate task="处理数据"
+```
+重新执行数据处理任务
 ```
 
 ```
