@@ -1,7 +1,7 @@
 ---
 id: genesis
 name: Genesis
-version: 1.1.0
+version: 1.2.0
 description: 元技能 - 根据用户需求自动生成新的 skill，并配置到 Claude Code
 directory: _meta/
 upstream: []
@@ -35,6 +35,15 @@ tags:
   - core
 ---
 
+<!--
+  @file: genesis.md
+  @parent: _meta/
+  @function: 元技能 - 根据用户需求自动生成新的 skill
+  @skills: registry
+  @created: 2026-01-14
+  @updated: 2026-01-14
+-->
+
 # Genesis - Skill 生成器
 
 > 根据用户需求自动生成新的 skill 文件，配置到 Claude Code，并注册到系统中
@@ -43,10 +52,11 @@ tags:
 
 Genesis 是整个自进化系统的核心。它负责：
 1. 解析用户的需求描述
-2. 生成符合规范的 skill 文件
+2. 生成符合规范的 skill 文件（包含标准注释）
 3. 配置到 Claude Code 的 `.claude/skills/` 目录
 4. 自动注册到 skills.json
-5. 通过热重载机制使新 skill 立即可用
+5. 更新目录索引 claude.md
+6. 通过热重载机制使新 skill 立即可用
 
 ## Instructions
 
@@ -83,9 +93,18 @@ skill-<三位数字>-<简短描述>
 
 在 `./_generated/` 目录下创建新的 skill 文件，用于版本控制。
 
-文件必须遵循 `./_core/skill-template.md` 中定义的模板格式：
+**重要**: 文件必须包含标准注释头，格式如下：
 
 ```markdown
+<!--
+  @file: <文件名>
+  @parent: _generated/
+  @function: <文件功能描述>
+  @skills: <调用的 skills，逗号分隔，无则填 ->
+  @created: <当前日期>
+  @updated: <当前日期>
+  @generator: genesis
+-->
 ---
 id: <generated-id>
 name: <skill-name>
@@ -149,12 +168,6 @@ mkdir -p ./.claude/skills/<skill-name>
 ln -s ../../../_generated/<skill-filename>.md ./.claude/skills/<skill-name>/SKILL.md
 ```
 
-例如，对于 `skill-002-data-fetch`：
-```bash
-mkdir -p ./.claude/skills/data-fetch
-ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SKILL.md
-```
-
 ### Step 4: 更新注册表
 
 读取并更新 `./skills.json`：
@@ -164,12 +177,23 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
 3. 在 `graph.edges` 中添加依赖边
 4. 更新 `updated_at` 时间戳
 
-### Step 5: 确认创建
+### Step 5: 更新目录索引
+
+**重要**: 更新 `./_generated/claude.md` 文件，在"已生成的 Skills"表格中添加新条目：
+
+```markdown
+| <文件名> | <功能描述> | <上游依赖> |
+```
+
+同时更新 `./.claude/skills/claude.md` 文件，在"已配置的 Skills"表格中添加新条目。
+
+### Step 6: 确认创建
 
 向用户报告：
 - 新 skill 的 ID 和路径
 - Claude Code 配置路径
 - 注册表已更新
+- 目录索引已更新
 - skill 已通过热重载生效，可以用自然语言触发
 
 ## Communication
@@ -187,7 +211,8 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
         "skill_id": "<new-skill-id>",
         "skill_path": "./_generated/<filename>.md",
         "claude_skill_path": "./.claude/skills/<skill-name>/SKILL.md",
-        "registered": true
+        "registered": true,
+        "index_updated": true
       }
     }
   }
@@ -201,6 +226,7 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
 - **文件写入失败**: 报告错误并提供手动创建指南
 - **注册表更新失败**: 保留 skill 文件，提示手动注册
 - **符号链接创建失败**: 报告错误，尝试直接复制文件作为备选
+- **索引更新失败**: 提示手动更新 claude.md
 
 ## Examples
 
@@ -212,10 +238,11 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
 ```
 
 **Genesis 执行:**
-1. 创建文件: `./_generated/skill-002-api-fetch.md`
+1. 创建文件: `./_generated/skill-002-api-fetch.md`（包含标准注释头）
 2. 创建目录: `./.claude/skills/api-fetch/`
 3. 创建链接: `./.claude/skills/api-fetch/SKILL.md` → `../../../_generated/skill-002-api-fetch.md`
-4. 更新注册表
+4. 更新注册表 `skills.json`
+5. 更新索引 `_generated/claude.md` 和 `.claude/skills/claude.md`
 
 **输出:**
 ```
@@ -223,7 +250,27 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
 ✓ 源文件: ./_generated/skill-002-api-fetch.md
 ✓ Claude Code 配置: ./.claude/skills/api-fetch/SKILL.md
 ✓ 已注册到 skills.json
+✓ 已更新目录索引
 ✓ skill 已生效，用自然语言描述 API 获取需求即可触发
+```
+
+**生成的文件内容示例:**
+```markdown
+<!--
+  @file: skill-002-api-fetch.md
+  @parent: _generated/
+  @function: 从 REST API 获取 JSON 数据，支持 GET 和 POST 请求
+  @skills: -
+  @created: 2026-01-14
+  @updated: 2026-01-14
+  @generator: genesis
+-->
+---
+id: skill-002-api-fetch
+name: API Fetch
+version: 1.0.0
+description: 从 REST API 获取 JSON 数据，支持 GET 和 POST 请求
+...
 ```
 
 ### Example 2: 创建数据转换 skill
@@ -238,6 +285,7 @@ ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SK
 2. 配置 upstream: `skill-002-api-fetch`
 3. 创建目录和链接到 `.claude/skills/json-to-csv/`
 4. 更新注册表和依赖图
+5. 更新目录索引
 
 ## Self-Evolution
 
