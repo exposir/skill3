@@ -73,9 +73,11 @@ ln -s ../../../_generated/skill-002-api-fetch.md .claude/skills/api-fetch/SKILL.
 | `contracts/` | `_meta/frontend/contracts.md` | 契约管理 |
 | `build/` | `_meta/frontend/build.md` | 构建验证 |
 | `coordinate/` | `_meta/frontend/coordinator.md` | 模块协调 |
+| `api-fetch/` | `_generated/skill-002-api-fetch.md` | REST API 数据获取 |
 
 ## 更新日志
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-14 | 添加 api-fetch skill |
 | 2026-01-14 | 创建目录索引，配置核心 skills |
