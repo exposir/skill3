@@ -1,0 +1,1 @@
+../../../_generated/skill-006-batch-module.md

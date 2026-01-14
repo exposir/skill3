@@ -74,10 +74,16 @@ ln -s ../../../_generated/skill-002-api-fetch.md .claude/skills/api-fetch/SKILL.
 | `build/` | `_meta/frontend/build.md` | 构建验证 |
 | `coordinate/` | `_meta/frontend/coordinator.md` | 模块协调 |
 | `api-fetch/` | `_generated/skill-002-api-fetch.md` | REST API 数据获取 |
+| `mf-init/` | `_generated/skill-003-mf-init.md` | 微前端项目初始化 |
+| `app-generator/` | `_generated/skill-004-app-generator.md` | 微前端子应用生成 |
+| `shared-lib/` | `_generated/skill-005-shared-lib.md` | 共享库生成 |
+| `batch-module/` | `_generated/skill-006-batch-module.md` | 批量模块生成 |
 
 ## 更新日志
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-15 | 添加 app-generator, shared-lib, batch-module skills |
+| 2026-01-14 | 添加 mf-init skill |
 | 2026-01-14 | 添加 api-fetch skill |
 | 2026-01-14 | 创建目录索引，配置核心 skills |

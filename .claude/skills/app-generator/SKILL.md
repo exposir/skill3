@@ -1,0 +1,1 @@
+../../../_generated/skill-004-app-generator.md

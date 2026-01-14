@@ -121,6 +121,58 @@
       "status": "active",
       "created_by": "genesis",
       "tags": ["generated", "api", "fetch", "http"]
+    },
+    "skill-003-mf-init": {
+      "id": "skill-003-mf-init",
+      "name": "Micro Frontend Init",
+      "description": "初始化微前端项目结构，生成 Monorepo 配置和 Module Federation 设置",
+      "path": "_generated/skill-003-mf-init.md",
+      "type": "generated",
+      "upstream": [],
+      "downstream": ["skill-004-app-generator"],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["generated", "micro-frontend", "monorepo", "vite"]
+    },
+    "skill-004-app-generator": {
+      "id": "skill-004-app-generator",
+      "name": "App Generator",
+      "description": "生成微前端子应用，包含目录结构、路由配置和 Module Federation remote 设置",
+      "path": "_generated/skill-004-app-generator.md",
+      "type": "generated",
+      "upstream": ["skill-003-mf-init"],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["generated", "micro-frontend", "app", "vite"]
+    },
+    "skill-005-shared-lib": {
+      "id": "skill-005-shared-lib",
+      "name": "Shared Library Generator",
+      "description": "生成 Monorepo 共享库包，支持 types、utils、hooks、services、ui 等类型",
+      "path": "_generated/skill-005-shared-lib.md",
+      "type": "generated",
+      "upstream": [],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["generated", "shared", "library", "monorepo"]
+    },
+    "skill-006-batch-module": {
+      "id": "skill-006-batch-module",
+      "name": "Batch Module Generator",
+      "description": "批量生成业务模块，自动解析依赖关系并按拓扑顺序创建",
+      "path": "_generated/skill-006-batch-module.md",
+      "type": "generated",
+      "upstream": ["module-generator", "coordinator"],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["generated", "batch", "module", "coordinator"]
     }
   },
   "graph": {
@@ -133,7 +185,12 @@
       "contracts",
       "build",
       "coordinator",
-      "skill-001-hello-world"
+      "skill-001-hello-world",
+      "skill-002-api-fetch",
+      "skill-003-mf-init",
+      "skill-004-app-generator",
+      "skill-005-shared-lib",
+      "skill-006-batch-module"
     ],
     "edges": [
       { "from": "genesis", "to": "registry" },
@@ -157,7 +214,12 @@
     "contracts",
     "coordinator",
     "build",
-    "skill-001-hello-world"
+    "skill-001-hello-world",
+    "skill-002-api-fetch",
+    "skill-003-mf-init",
+    "skill-004-app-generator",
+    "skill-005-shared-lib",
+    "skill-006-batch-module"
   ],
   "frontend": {
     "version": "1.0.0",

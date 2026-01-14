@@ -1,0 +1,4 @@
+
+> @collab-saas/docs@0.1.0 typecheck /Users/menglingyu/skill3/collab-saas/apps/docs
+> tsc --noEmit
+

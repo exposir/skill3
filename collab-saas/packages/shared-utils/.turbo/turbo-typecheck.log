@@ -1,0 +1,4 @@
+
+> @collab-saas/shared-utils@0.1.0 typecheck /Users/menglingyu/skill3/collab-saas/packages/shared-utils
+> tsc --noEmit
+

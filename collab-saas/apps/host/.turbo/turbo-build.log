@@ -1,0 +1,20 @@
+
+> @collab-saas/host@0.1.0 build /Users/menglingyu/skill3/collab-saas/apps/host
+> tsc && vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 51 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                 0.38 kB │ gzip:  0.27 kB
+dist/assets/style-BRZAox1f.css                                  0.92 kB │ gzip:  0.45 kB
+dist/assets/__federation_shared_react-BCcI129A.js               0.05 kB │ gzip:  0.07 kB
+dist/assets/__federation_shared_react-dom-BN8Au471.js           0.05 kB │ gzip:  0.07 kB
+dist/assets/index-Dm_EQZZA.js                                   7.86 kB │ gzip:  2.91 kB
+dist/assets/__federation_shared_zustand-4y_OS_Q7.js             8.61 kB │ gzip:  2.39 kB
+dist/assets/index-Bs5nPpHB.js                                   9.33 kB │ gzip:  2.57 kB
+dist/assets/_virtual___federation_fn_import-BJRQcQjZ.js        14.34 kB │ gzip:  3.16 kB
+dist/assets/index-COvqqES_.js                                 138.52 kB │ gzip: 44.26 kB
+dist/assets/__federation_shared_react-router-dom-BQUuYL98.js  248.31 kB │ gzip: 59.28 kB
+✓ built in 1.52s

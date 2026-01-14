@@ -1,0 +1,1 @@
+../../../_generated/skill-005-shared-lib.md
