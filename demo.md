@@ -33,8 +33,10 @@
 Claude 会识别这是一个生成新 skill 的需求，自动加载 Genesis skill，然后：
 ```
 ✓ 已创建 skill: skill-002-greeting
-✓ 路径: ./_generated/skill-002-greeting.md
+✓ 源文件: ./_generated/skill-002-greeting.md
+✓ Claude Code 配置: ./.claude/skills/greeting/SKILL.md
 ✓ 已注册到 skills.json
+✓ skill 已生效，用自然语言描述需求即可触发
 ```
 
 **使用新 skill**:
@@ -100,7 +102,7 @@ genesis
 
 **步骤**:
 
-1. 创建 skill 目录和文件 `.claude/skills/calculator/SKILL.md`:
+1. 创建源文件 `_generated/skill-003-calculator.md`:
 
 ```markdown
 ---
@@ -126,9 +128,16 @@ description: 简单计算器，支持加减乘除运算
 输出: `结果: 20`
 ```
 
-2. Skill 会自动被 Claude Code 加载（热重载）
+2. 创建 Claude Code 配置（让 skill 可被识别）:
 
-3. 使用:
+```bash
+mkdir -p .claude/skills/calculator
+ln -s ../../../_generated/skill-003-calculator.md .claude/skills/calculator/SKILL.md
+```
+
+3. Skill 会自动被 Claude Code 加载（热重载）
+
+4. 使用:
 
 ```
 # 用自然语言触发
@@ -255,16 +264,40 @@ description: 简单计算器，支持加减乘除运算
 创建一个 data-fetcher skill，从指定 URL 获取 JSON 数据
 ```
 
+**Genesis 执行：**
+```
+✓ 已创建 skill: skill-002-data-fetcher
+✓ 源文件: ./_generated/skill-002-data-fetcher.md
+✓ Claude Code 配置: ./.claude/skills/data-fetcher/SKILL.md
+✓ 已注册到 skills.json
+```
+
 ### Step 2: 创建数据转换 Skill
 
 ```
 创建一个 data-transformer skill，将 JSON 数据转换为表格格式，它依赖 data-fetcher 的输出
 ```
 
+**Genesis 执行：**
+```
+✓ 已创建 skill: skill-003-data-transformer
+✓ 源文件: ./_generated/skill-003-data-transformer.md
+✓ Claude Code 配置: ./.claude/skills/data-transformer/SKILL.md
+✓ upstream: [skill-002-data-fetcher]
+```
+
 ### Step 3: 创建数据输出 Skill
 
 ```
 创建一个 data-exporter skill，将表格数据导出为 CSV 文件，它依赖 data-transformer 的输出
+```
+
+**Genesis 执行：**
+```
+✓ 已创建 skill: skill-004-data-exporter
+✓ 源文件: ./_generated/skill-004-data-exporter.md
+✓ Claude Code 配置: ./.claude/skills/data-exporter/SKILL.md
+✓ upstream: [skill-003-data-transformer]
 ```
 
 ### Step 4: 查看依赖图
@@ -325,10 +358,27 @@ Output: ./output/users.csv
 3. fetch-stocks skill - 获取股票数据
 ```
 
+**Genesis 执行：**
+```
+✓ 已创建 skill: skill-005-fetch-weather
+  └─ .claude/skills/fetch-weather/SKILL.md
+✓ 已创建 skill: skill-006-fetch-news
+  └─ .claude/skills/fetch-news/SKILL.md
+✓ 已创建 skill: skill-007-fetch-stocks
+  └─ .claude/skills/fetch-stocks/SKILL.md
+```
+
 ### 创建聚合 Skill
 
 ```
 创建一个 dashboard-aggregator skill，聚合天气、新闻、股票数据生成仪表板，它依赖上面三个 skill
+```
+
+**Genesis 执行：**
+```
+✓ 已创建 skill: skill-008-dashboard-aggregator
+✓ Claude Code 配置: ./.claude/skills/dashboard-aggregator/SKILL.md
+✓ upstream: [fetch-weather, fetch-news, fetch-stocks]
 ```
 
 ### 查看并行组
