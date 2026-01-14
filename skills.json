@@ -108,6 +108,19 @@
       "status": "active",
       "created_by": "genesis",
       "tags": ["example", "demo"]
+    },
+    "skill-002-api-fetch": {
+      "id": "skill-002-api-fetch",
+      "name": "API Fetch",
+      "description": "从 REST API 获取 JSON 数据，支持 GET 和 POST 请求",
+      "path": "_generated/skill-002-api-fetch.md",
+      "type": "generated",
+      "upstream": [],
+      "downstream": [],
+      "version": "1.0.0",
+      "status": "active",
+      "created_by": "genesis",
+      "tags": ["generated", "api", "fetch", "http"]
     }
   },
   "graph": {
