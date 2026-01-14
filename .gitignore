@@ -19,3 +19,11 @@ Thumbs.db
 
 # Generated
 _generated/
+
+# Turbo
+.turbo/
+
+# Build
+dist/
+build/
+*.log
