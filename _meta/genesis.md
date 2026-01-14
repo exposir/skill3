@@ -1,8 +1,8 @@
 ---
 id: genesis
 name: Genesis
-version: 1.0.0
-description: 元技能 - 根据用户需求自动生成新的 skill
+version: 1.1.0
+description: 元技能 - 根据用户需求自动生成新的 skill，并配置到 Claude Code
 directory: _meta/
 upstream: []
 downstream:
@@ -23,6 +23,9 @@ outputs:
   - name: skill_path
     type: string
     description: 生成的 skill 文件路径
+  - name: claude_skill_path
+    type: string
+    description: Claude Code skill 配置路径
 created_by: manual
 created_at: 2026-01-14
 updated_at: 2026-01-14
@@ -34,19 +37,20 @@ tags:
 
 # Genesis - Skill 生成器
 
-> 根据用户需求自动生成新的 skill 文件，并注册到系统中
+> 根据用户需求自动生成新的 skill 文件，配置到 Claude Code，并注册到系统中
 
 ## Context
 
 Genesis 是整个自进化系统的核心。它负责：
 1. 解析用户的需求描述
 2. 生成符合规范的 skill 文件
-3. 自动注册到 skills.json
-4. 通过热重载机制使新 skill 立即可用
+3. 配置到 Claude Code 的 `.claude/skills/` 目录
+4. 自动注册到 skills.json
+5. 通过热重载机制使新 skill 立即可用
 
 ## Instructions
 
-当用户调用 `/genesis` 时，执行以下步骤：
+当用户描述创建新 skill 的需求时，执行以下步骤：
 
 ### Step 1: 解析需求
 
@@ -57,7 +61,7 @@ Genesis 是整个自进化系统的核心。它负责：
 - **依赖**: 是否依赖其他 skills
 - **下游**: 哪些 skills 会使用它的输出
 
-### Step 2: 生成 Skill ID
+### Step 2: 生成 Skill ID 和名称
 
 生成唯一的 skill ID：
 ```
@@ -65,11 +69,19 @@ skill-<三位数字>-<简短描述>
 例如: skill-001-data-fetch
 ```
 
+同时生成 Claude Code 可识别的 skill 名称（用于目录名）：
+```
+<简短描述>
+例如: data-fetch
+```
+
 查询 `./skills.json` 获取当前最大的 skill 编号，然后 +1。
 
-### Step 3: 创建 Skill 文件
+### Step 3: 创建 Skill 文件（两个位置）
 
-在 `./_generated/` 目录下创建新的 skill 文件。
+#### 3a. 在 `_generated/` 目录创建完整 skill 文件
+
+在 `./_generated/` 目录下创建新的 skill 文件，用于版本控制。
 
 文件必须遵循 `./_core/skill-template.md` 中定义的模板格式：
 
@@ -78,7 +90,7 @@ skill-<三位数字>-<简短描述>
 id: <generated-id>
 name: <skill-name>
 version: 1.0.0
-description: <用户需求的简化描述>
+description: <用户需求的简化描述，最多 200 字符>
 directory: _generated/
 upstream:
   - <依赖的 skill>
@@ -124,6 +136,25 @@ Set `data.<this-skill>.status` to "completed"
 - <错误处理逻辑>
 ```
 
+#### 3b. 在 `.claude/skills/` 目录配置 Claude Code skill
+
+**重要**: 这一步让 Claude Code 能够识别和加载新 skill。
+
+1. 创建目录 `./.claude/skills/<skill-name>/`
+2. 创建符号链接 `./.claude/skills/<skill-name>/SKILL.md` 指向 `../../../_generated/<skill-filename>.md`
+
+执行命令：
+```bash
+mkdir -p ./.claude/skills/<skill-name>
+ln -s ../../../_generated/<skill-filename>.md ./.claude/skills/<skill-name>/SKILL.md
+```
+
+例如，对于 `skill-002-data-fetch`：
+```bash
+mkdir -p ./.claude/skills/data-fetch
+ln -s ../../../_generated/skill-002-data-fetch.md ./.claude/skills/data-fetch/SKILL.md
+```
+
 ### Step 4: 更新注册表
 
 读取并更新 `./skills.json`：
@@ -137,8 +168,9 @@ Set `data.<this-skill>.status` to "completed"
 
 向用户报告：
 - 新 skill 的 ID 和路径
+- Claude Code 配置路径
 - 注册表已更新
-- 可以通过 `/<skill-name>` 调用
+- skill 已通过热重载生效，可以用自然语言触发
 
 ## Communication
 
@@ -154,6 +186,7 @@ Set `data.<this-skill>.status` to "completed"
       "output": {
         "skill_id": "<new-skill-id>",
         "skill_path": "./_generated/<filename>.md",
+        "claude_skill_path": "./.claude/skills/<skill-name>/SKILL.md",
         "registered": true
       }
     }
@@ -167,6 +200,7 @@ Set `data.<this-skill>.status` to "completed"
 - **ID 冲突**: 自动选择下一个可用 ID
 - **文件写入失败**: 报告错误并提供手动创建指南
 - **注册表更新失败**: 保留 skill 文件，提示手动注册
+- **符号链接创建失败**: 报告错误，尝试直接复制文件作为备选
 
 ## Examples
 
@@ -174,27 +208,36 @@ Set `data.<this-skill>.status` to "completed"
 
 **用户输入:**
 ```
-/genesis "创建一个从 REST API 获取 JSON 数据的 skill，需要支持 GET 和 POST 请求"
+帮我创建一个从 REST API 获取 JSON 数据的 skill，需要支持 GET 和 POST 请求
 ```
 
-**Genesis 生成:**
-- 文件: `./_generated/skill-001-api-fetch.md`
-- ID: `skill-001-api-fetch`
-- 输入: url, method, headers, body
-- 输出: response, status_code
+**Genesis 执行:**
+1. 创建文件: `./_generated/skill-002-api-fetch.md`
+2. 创建目录: `./.claude/skills/api-fetch/`
+3. 创建链接: `./.claude/skills/api-fetch/SKILL.md` → `../../../_generated/skill-002-api-fetch.md`
+4. 更新注册表
+
+**输出:**
+```
+✓ 已创建 skill: skill-002-api-fetch
+✓ 源文件: ./_generated/skill-002-api-fetch.md
+✓ Claude Code 配置: ./.claude/skills/api-fetch/SKILL.md
+✓ 已注册到 skills.json
+✓ skill 已生效，用自然语言描述 API 获取需求即可触发
+```
 
 ### Example 2: 创建数据转换 skill
 
 **用户输入:**
 ```
-/genesis "创建一个 JSON 转 CSV 的 skill，上游是 api-fetch"
+创建一个 JSON 转 CSV 的 skill，它依赖 api-fetch skill 的输出
 ```
 
-**Genesis 生成:**
-- 文件: `./_generated/skill-002-json-to-csv.md`
-- upstream: `skill-001-api-fetch`
-- 输入: json_data (从上游获取)
-- 输出: csv_string
+**Genesis 执行:**
+1. 创建文件: `./_generated/skill-003-json-to-csv.md`
+2. 配置 upstream: `skill-002-api-fetch`
+3. 创建目录和链接到 `.claude/skills/json-to-csv/`
+4. 更新注册表和依赖图
 
 ## Self-Evolution
 
